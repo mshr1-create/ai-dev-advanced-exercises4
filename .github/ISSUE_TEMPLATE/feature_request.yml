@@ -1,0 +1,67 @@
+name: Feature request
+description: 機能追加/改善用テンプレート
+title: '[ISxxx] 機能: <タイトル>'
+labels: ['enhancement', 'priority:Should']
+body:
+  - type: input
+    id: issue_id
+    attributes:
+      label: Issue ID
+      description: IS番号（例 IS001）
+      placeholder: IS001
+    validations:
+      required: true
+  - type: input
+    id: epic_id
+    attributes:
+      label: Epic ID
+      description: Epic番号（例 EP01）
+      placeholder: EP01
+    validations:
+      required: false
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 提案する機能の概要
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: 詳細タスク
+      description: 実装タスクを箇条書きで列挙
+      placeholder: |
+        - 仕様整理
+        - 画面/API設計
+        - 実装
+        - テスト
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: 完了の定義（ユーザ視点/品質観点）
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - Must
+        - Should
+        - Could
+      default: 1
+    validations:
+      required: true
+  - type: checkboxes
+    id: phase
+    attributes:
+      label: 想定フェーズ
+      options:
+        - label: Design
+        - label: Implementation
+        - label: Test
+        - label: Release

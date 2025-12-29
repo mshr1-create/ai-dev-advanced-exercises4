@@ -1,0 +1,65 @@
+name: Bug report
+description: 不具合報告用テンプレート
+title: '[ISxxx] バグ: <タイトル>'
+labels: ['bug', 'priority:Should']
+body:
+  - type: input
+    id: issue_id
+    attributes:
+      label: Issue ID
+      description: IS番号（例 IS001）
+      placeholder: IS001
+    validations:
+      required: true
+  - type: input
+    id: epic_id
+    attributes:
+      label: Epic ID
+      description: Epic番号（例 EP01）
+      placeholder: EP01
+    validations:
+      required: false
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: バグの概要を記載
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: 詳細タスク / 再現手順
+      description: 再現手順、期待値、実際の結果、影響範囲など
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: 完了の定義（チェック観点）
+      placeholder: |
+        - 再現手順で再現しないこと
+        - 回帰がないこと
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - Must
+        - Should
+        - Could
+      default: 1
+    validations:
+      required: true
+  - type: checkboxes
+    id: phase
+    attributes:
+      label: 想定フェーズ
+      options:
+        - label: Design
+        - label: Implementation
+        - label: Test
+        - label: Release

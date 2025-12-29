@@ -1,0 +1,23 @@
+{
+  "name": "ai-dev-advanced-exercises4",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Development baseline: templates, lint/format, CI for the sweets EC project",
+  "scripts": {
+    "dev": "node -e \"console.log('No dev server yet')\"",
+    "lint": "npm run lint:md && npm run lint:prettier",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
+    "lint:prettier": "prettier --check .",
+    "format": "prettier --write .",
+    "test": "node -e \"console.log('No tests yet')\"",
+    "build": "node -e \"console.log('No build step yet')\""
+  },
+  "devDependencies": {
+    "markdownlint": "^0.34.0",
+    "markdownlint-cli2": "^0.14.0",
+    "prettier": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
