@@ -40,20 +40,70 @@
 
 本リポジトリでは、アプリ言語に依存しない共通ツールとして Node.js ベースの Lint/Format を採用しています（Markdown/YAML/JSON などの整形・検査に利用）。
 
-- 前提
-  - Node.js 18 以上（LTS 推奨）
-  - npm
+### 必要なツール
 
-- セットアップ
+以下のツールを事前にインストールしてください：
+
+- **Git**: 2.30 以上
+  - [公式サイト](https://git-scm.com/)からインストール
+  - Windows: Git for Windows 推奨
+- **Node.js**: 18.x 以上（LTS 推奨、現在は 20.x を推奨）
+  - [公式サイト](https://nodejs.org/)からダウンロード
+  - バージョン確認: `node -v`
+- **npm**: Node.js に同梱（7.x 以上）
+  - バージョン確認: `npm -v`
+- **エディタ**: VS Code 推奨
+  - [公式サイト](https://code.visualstudio.com/)
+  - 推奨拡張機能:
+    - Prettier - Code formatter
+    - markdownlint
+    - EditorConfig for VS Code
+
+### セットアップ手順
+
+1. **リポジトリをクローン**
+
+```pwsh
+git clone https://github.com/mshr1-create/ai-dev-advanced-exercises4.git
+cd ai-dev-advanced-exercises4
+```
+
+2. **ブランチを確認・切り替え**
+
+```pwsh
+# develop ブランチに移動（開発のベース）
+git checkout develop
+git pull origin develop
+```
+
+3. **依存関係をインストール**
 
 ```pwsh
 npm i
 ```
 
-- 実行コマンド
+4. **環境変数を設定（将来の実装用）**
 
 ```pwsh
-# 開発（現時点ではダミー）
+# .env.example をコピーして .env を作成
+cp .env.example .env
+# 必要に応じて .env の値を編集
+```
+
+5. **動作確認**
+
+```pwsh
+# Lint チェック
+npm run lint
+
+# Format 適用
+npm run format
+```
+
+### 実行コマンド
+
+```pwsh
+# 開発サーバー起動（現時点ではダミー、将来のアプリ実装後に有効化）
 npm run dev
 
 # Lint（markdownlint + prettier チェック）
@@ -68,6 +118,115 @@ npm test
 # Build（将来のビルド追加までダミー）
 npm run build
 ```
+
+### 環境変数
+
+プロジェクトで使用する環境変数は `.env.example` を参照してください。
+
+| 変数名   | 説明                               | デフォルト値 | 必須 |
+| -------- | ---------------------------------- | ------------ | ---- |
+| NODE_ENV | 実行環境（development/production） | development  | No   |
+| PORT     | アプリケーションポート（将来用）   | 3000         | No   |
+
+※ 現時点ではアプリ実装がないため、環境変数は使用されていません。
+
+### トラブルシューティング
+
+#### `npm i` で依存関係のインストールに失敗する
+
+**症状**: `npm ERR!` エラーが出る
+
+**対処法**:
+
+1. Node.js のバージョンを確認（18.x 以上が必要）
+
+```pwsh
+node -v
+```
+
+2. npm キャッシュをクリア
+
+```pwsh
+npm cache clean --force
+npm i
+```
+
+3. `node_modules` と `package-lock.json` を削除して再インストール
+
+```pwsh
+rm -r node_modules
+rm package-lock.json
+npm i
+```
+
+#### `npm run lint` で大量のエラーが出る
+
+**症状**: Markdown や整形エラーが多数表示される
+
+**対処法**:
+
+1. 自動整形を実行
+
+```pwsh
+npm run format
+```
+
+2. 再度 Lint を実行
+
+```pwsh
+npm run lint
+```
+
+#### Git のブランチ操作でエラーが出る
+
+**症状**: `error: Your local changes to the following files would be overwritten by checkout`
+
+**対処法**:
+
+1. 変更をコミットまたはスタッシュ
+
+```pwsh
+# コミットする場合
+git add -A
+git commit -m "chore: 作業中の変更を保存"
+
+# 一時退避する場合
+git stash
+```
+
+2. ブランチを切り替え
+
+```pwsh
+git checkout develop
+```
+
+#### Windows で改行コードの警告が出る
+
+**症状**: `warning: LF will be replaced by CRLF`
+
+**対処法**:
+
+1. Git の autocrlf 設定を確認
+
+```pwsh
+git config --global core.autocrlf true
+```
+
+2. `.editorconfig` の設定に従うよう、エディタを設定（VS Code は自動対応）
+
+#### 起動時に30分以上かかる場合
+
+**対処法**:
+
+1. インターネット接続を確認（npm レジストリへのアクセスが必要）
+2. 企業プロキシ環境の場合、npm プロキシ設定を確認
+
+```pwsh
+npm config get proxy
+npm config get https-proxy
+```
+
+3. Node.js を再インストール（破損している可能性）
 
 ## CI
 
