@@ -61,7 +61,7 @@ def configure_logging() -> None:
         logging.getLogger(logger_name).propagate = True
 
 
-def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
+def get_logger(name: str | None = None) -> Any:
     """Get a configured logger instance.
 
     Args:
