@@ -9,11 +9,13 @@
 ### 1. 入力バリデーション（A3: Injection 対策）
 
 #### メール検証
+
 - RFC 5322 準拠のメールアドレスフォーマット検証
 - 最大長: 254 文字
 - 自動的に小文字に正規化
 
 **使用例:**
+
 ```python
 from app.core.validators import EmailValidator
 
@@ -22,7 +24,9 @@ email = EmailValidator.validate_email("User@EXAMPLE.COM")
 ```
 
 #### パスワード強度検証
+
 必須要件:
+
 - 最低 8 文字以上
 - 大文字 1 文字以上（A-Z）
 - 小文字 1 文字以上（a-z）
@@ -30,6 +34,7 @@ email = EmailValidator.validate_email("User@EXAMPLE.COM")
 - 特殊文字 1 文字以上（!@#$%^&* など）
 
 **使用例:**
+
 ```python
 from app.core.validators import PasswordValidator
 
@@ -40,13 +45,16 @@ except ValueError as e:
 ```
 
 #### SQL インジェクション対策
+
 危険なキーワード検出:
+
 - UNION, SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, EXEC
 - コメント記号（--、;、/*、*/）
 - OR 条件パターン
 - LIKE ワイルドカード
 
 **使用例:**
+
 ```python
 from app.core.validators import SQLInjectionValidator
 
@@ -57,11 +65,14 @@ except ValueError as e:
 ```
 
 #### XSS（Cross-Site Scripting）対策
+
 危険なHTMLタグ・属性検出:
+
 - `<script>`, `<iframe>`, `<img>`
 - `onerror=`, `onload=`, `onclick=` 属性
 
 **使用例:**
+
 ```python
 from app.core.validators import XSSValidator
 
@@ -74,11 +85,13 @@ except ValueError as e:
 ### 2. 認証・認可（A01: Broken Access Control 対策）
 
 #### JWT ベースの認証
+
 - **トークン生成**: RS256 署名
 - **有効期限**: 30 分（デフォルト）
 - **クレーム**: Subject (sub) に ユーザーID を保持
 
 **エンドポイント:**
+
 ```bash
 # ログイン
 curl -X POST http://localhost:3000/api/v1/login \
@@ -93,11 +106,13 @@ curl -X POST http://localhost:3000/api/v1/login \
 ```
 
 #### パスワード管理
+
 - **ハッシング**: bcrypt (cost=12)
 - **ソルティング**: 自動的にランダムソルトを生成
 - **平文保存禁止**: すべてのパスワードはハッシュされて保存
 
 **使用例:**
+
 ```python
 from app.core.security import hash_password, verify_password
 
@@ -109,6 +124,7 @@ is_valid = verify_password("Password@123", hashed)  # True
 ```
 
 #### 保護エンドポイント
+
 `Authorization` ヘッダーでJWT を指定:
 
 ```bash
@@ -131,7 +147,8 @@ curl -H "Authorization: Bearer <your-token>" \
 | `Permissions-Policy` | 機能ごとの許可設定 | マイク・カメラなど制限 |
 
 **Content-Security-Policy の詳細:**
-```
+
+```text
 default-src 'self'                          # デフォルトは同一オリジンのみ
 script-src 'self' 'unsafe-inline'          # スクリプトは同一オリジンか インライン
 style-src 'self' 'unsafe-inline'           # スタイルは同一オリジンかインライン
@@ -145,11 +162,13 @@ form-action 'self'                         # フォーム送信は同一オリ�
 ### 4. CSRF（Cross-Site Request Forgery）対策
 
 #### トークンベースCSRF 保護
+
 - **トークン生成**: 32 バイト のランダムトークン
 - **有効期限**: 1 時間
 - **検証**: X-CSRF-Token ヘッダーで検証
 
 **使用例:**
+
 ```python
 from app.core.csrf import csrf_token_manager
 
@@ -174,22 +193,26 @@ except HTTPException:
 | 時単位 | 1000 リクエスト/時 |
 
 **制限超過時:**
+
 ```json
 {
   "detail": "Rate limit exceeded"
 }
 ```
+
 ステータスコード: 429 (Too Many Requests)
 
 ### 6. 相関ID（Correlation ID）による監査ログ
 
 すべてのリクエスト・レスポンスに一意な相関ID を付与:
+
 - **ヘッダー**: X-Correlation-ID
 - **フォーマット**: UUID v4
 - **ログ記録**: すべてのログエントリに自動含有
 - **カスタマイズ**: クライアントから指定可能
 
 **使用例:**
+
 ```bash
 # カスタム相関ID を指定
 curl -H "X-Correlation-ID: my-custom-id-123" \
@@ -211,6 +234,7 @@ pytest tests/test_security.py -v
 ```
 
 テスト項目:
+
 - メール検証（有効・無効・正規化）
 - パスワード検証（強度・要件チェック）
 - SQL インジェクション検出
@@ -225,34 +249,42 @@ pytest tests/test_security.py -v
 ### 本番環境での注意事項
 
 1. **SECRET_KEY の変更**
+
    ```python
    # app/core/security.py
    SECRET_KEY = "your-secret-key-change-in-production"  # 環境変数から読み込む
    ```
+
    環境変数から読み込み、ファイルに保存しないこと
 
 2. **HTTPS の使用**
+
    - 本番環境では必ず HTTPS を使用
    - HSTS ヘッダーが設定されている
 
 3. **CORS の適切な設定**
+
    - `.env.example` でホワイトリストを管理
    - ワイルドカード `*` は使用しない
 
 4. **データベース接続**
+
    - SQL パラメータ化クエリの使用
    - ORM（SQLAlchemy など）の使用推奨
    - このコードの SQL インジェクション対策は基本的な検出のみ
 
 5. **環境変数管理**
+
    - `.env` ファイルは `.gitignore` に含める
    - 機密情報（API キー、DB パスワードなど）は環境変数に
 
 6. **ロギング**
+
    - 本番環境では `LOG_JSON_FORMAT=true` でJSON ログを使用
    - ログ集約ツール（ELK Stack など）と連携
 
 7. **監視・アラート**
+
    - レート制限超過の監視
    - 認証失敗の監視
    - 異常なバリデーションエラーの監視
