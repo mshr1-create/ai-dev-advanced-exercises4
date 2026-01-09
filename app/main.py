@@ -58,6 +58,11 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Add security headers middleware
+    from app.core.security_headers import SecurityHeadersMiddleware
+
+    app.add_middleware(SecurityHeadersMiddleware)
+
     # Add correlation ID middleware
     app.add_middleware(CorrelationIdMiddleware)
 
@@ -169,9 +174,10 @@ def register_routes(app: FastAPI) -> None:
     Args:
         app: FastAPI application
     """
-    from app.api import health
+    from app.api import health, security
 
     app.include_router(health.router, tags=["health"])
+    app.include_router(security.router, tags=["security"])
 
 
 # Create application instance
