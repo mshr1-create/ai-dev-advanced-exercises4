@@ -38,7 +38,7 @@
 
 ## ローカル開発
 
-本リポジトリでは、アプリ言語に依存しない共通ツールとして Node.js ベースの Lint/Format を採用しています（Markdown/YAML/JSON などの整形・検査に利用）。
+本リポジトリは **Python (FastAPI)** ベースのアプリケーションです。ドキュメント用に Node.js も使用します。
 
 ### 必要なツール
 
@@ -47,14 +47,21 @@
 - **Git**: 2.30 以上
   - [公式サイト](https://git-scm.com/)からインストール
   - Windows: Git for Windows 推奨
+- **Python**: 3.11 以上（3.12 推奨）
+  - [公式サイト](https://www.python.org/)からダウンロード
+  - バージョン確認: `python --version`
 - **Node.js**: 18.x 以上（LTS 推奨、現在は 20.x を推奨）
   - [公式サイト](https://nodejs.org/)からダウンロード
   - バージョン確認: `node -v`
+  - 用途: ドキュメント lint/format のみ
 - **npm**: Node.js に同梱（7.x 以上）
   - バージョン確認: `npm -v`
 - **エディタ**: VS Code 推奨
   - [公式サイト](https://code.visualstudio.com/)
   - 推奨拡張機能:
+    - Python (Microsoft)
+    - Pylance (Microsoft)
+    - Ruff
     - Prettier - Code formatter
     - markdownlint
     - EditorConfig for VS Code
@@ -76,13 +83,19 @@ git checkout develop
 git pull origin develop
 ```
 
-3. **依存関係をインストール**
+3. **Python依存関係をインストール**
+
+```pwsh
+pip install -e ".[dev]"
+```
+
+4. **ドキュメント用依存関係をインストール**
 
 ```pwsh
 npm i
 ```
 
-4. **環境変数を設定（将来の実装用）**
+5. **環境変数を設定**
 
 ```pwsh
 # .env.example をコピーして .env を作成
@@ -90,33 +103,45 @@ cp .env.example .env
 # 必要に応じて .env の値を編集
 ```
 
-5. **動作確認**
+6. **動作確認**
 
 ```pwsh
-# Lint チェック
-npm run lint
+# Python lint チェック
+ruff check app tests
 
-# Format 適用
-npm run format
+# Python format チェック
+black --check app tests
+
+# ドキュメント lint チェック
+npm run lint
 ```
 
 ### 実行コマンド
 
 ```pwsh
-# 開発サーバー起動（現時点ではダミー、将来のアプリ実装後に有効化）
-npm run dev
+# Python開発サーバー起動 (FastAPI)
+uvicorn app.main:app --reload --port 3000
 
-# Lint（markdownlint + prettier チェック）
+# Python lint
+ruff check app tests
+
+# Python format (自動修正)
+black app tests
+
+# Python type check
+mypy app
+
+# Python test
+pytest
+
+# Python test with coverage
+pytest --cov=app --cov-report=html
+
+# ドキュメント lint
 npm run lint
 
-# Format（prettier で自動整形）
+# ドキュメント format
 npm run format
-
-# Test（将来のテスト追加までダミー）
-npm test
-
-# Build（将来のビルド追加までダミー）
-npm run build
 ```
 
 ### 環境変数
